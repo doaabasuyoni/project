@@ -1,7 +1,6 @@
 <?php 
 //connected database
     include('connected/connected.php');
-    include"connected/mec.php";
 ?>
 <!DOCTYPE html>
 <html>
@@ -37,8 +36,7 @@
                             href="keys.php" role="tab" aria-controls="Display Keys Page">Display Keys</a>
                         <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list"
                             href="current.php" role="tab" aria-controls="Current
-                            Statistices Page">Current
-                            Statistices</a>
+                            Statistices Page">Manager App</a>
                     </div>
 
                 </aside>
@@ -57,54 +55,22 @@
                                 if(isset($_GET['search'])){ 
                                     $key = $_GET['key'];
                                     if (filter_var($key, FILTER_VALIDATE_INT) === 0 || !filter_var($key, FILTER_VALIDATE_INT) === false) {
-                                       if($memcacheD->get( $key)){
-                                          $val=$memcacheD->get( $key);
-                                          echo '<img src="images/'.$val. '" class="img-thumbnail">';
-                                          echo "<script>alert('image get in memcached');</script>";  
-                                          $getvalue="SELECT numreq from  memcached ";
-                                          $datquery=mysqli_query($conn, $getvalue);
-                                          $output=mysqli_fetch_assoc($datquery);
-                                          $value= $output['numreq'];
-                                          $newvalue=1+$value;
-                                          $addvaluequery="update memcached set numreq= $newvalue";
-                                          $addit=mysqli_query($conn,$addvaluequery);
-                                          //hitsrate
-                                          $getvalu="SELECT hitrate from  memcached ";
-                                          $datquer=mysqli_query($conn, $getvalu);
-                                          $outpu=mysqli_fetch_assoc($datquer);
-                                          $valu= $outpu['hitrate'];
-                                          $newvalu=1+$valu;
-                                          $addvaluequer="update memcached set hitrate= $newvalu";
-                                          $addit=mysqli_query($conn,$addvaluequer);
-                                        
-                                        }
-                                      else{
                                         $sql="select imgname from uplode where idimg = " . $key;
                                         $result= $conn->query($sql);
                                         if ($result->num_rows > 0) {
                                             while($row = $result->fetch_assoc()) {
                                             echo '<img src="images/'.$row["imgname"]. '" class="img-thumbnail">';
-                                          //miss
-                                          $getvalu="SELECT missrate from  memcached ";
-                                          $datquer=mysqli_query($conn, $getvalu);
-                                          $outpu=mysqli_fetch_assoc($datquer);
-                                          $valu= $outpu['missrate'];
-                                          $newvalu=1+$valu;
-                                          $addvaluequer="update memcached set missrate= $newvalu";
-                                          $addit=mysqli_query($conn,$addvaluequer);
-                                        
-                                       
                                             }
-                                        } else {
+                                            echo "<script>alert('image get in DataBase');</script>";  
+                                        }
+
+                                     else {
                                             echo "<div class='alert alert-warning'>No Data Found</div>";
                                         }
-                          echo "<script>alert('image get in DataBase');</script>";  
 
                                         $conn->close();
 
                                     }
-                                }
-                                    
                                     else {
                                         echo "<div class='alert alert-danger'>Please Enter Valid Key</div>";
                                     }

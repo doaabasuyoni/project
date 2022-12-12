@@ -39,8 +39,7 @@ mysqli_close($conn);
                             href="keys.php" role="tab" aria-controls="Display Keys Page">Display Keys Page</a>
                         <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list"
                             href="current.php" role="tab" aria-controls="Current
-                            Statistices ">Current
-                            Statistices </a>
+                            Statistices ">Manager App </a>
                     </div>
 
                 </aside>

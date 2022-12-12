@@ -1,83 +1,5 @@
 <?php
  include('connected/connected.php');
- include"connected/mec.php";
- $value='';
- $val='';
- $valu='';
- $valut='';
- $vals='';
- for($i=0;$i<1200;$i++){
-  //fetch  information in database
-  if($i==599){
-    //numreq
-    $getvalue="SELECT numreq from  memcached ";
-    $datquery=mysqli_query($conn, $getvalue);
-    $output=mysqli_fetch_assoc($datquery);
-    $value= $output['numreq'];
-    //totalsize
-    $getval="SELECT totalsize from  memcached ";
-    $datque=mysqli_query($conn, $getval);
-    $outp=mysqli_fetch_assoc($datque);
-    $val= $outp['totalsize'];
-    //miss rate
-    $getvalu="SELECT missrate from  memcached ";
-    $datquer=mysqli_query($conn, $getvalu);
-    $outpu=mysqli_fetch_assoc($datquer);
-    $valu= $outpu['missrate'];
-    //hitrate
-    $getvalut="SELECT hitrate from  memcached ";
-    $datquert=mysqli_query($conn, $getvalut);
-    $output=mysqli_fetch_assoc($datquert);
-    $valut= $output['hitrate'];
-    //numitems
-    $getva="SELECT items from  memcached ";
-    $datqu=mysqli_query($conn, $getva);
-    $outp=mysqli_fetch_assoc($datqu);
-    $vals= $outp['items'];
-    //capacity
-    $get="SELECT capacity from  memcached ";
-    $dat=mysqli_query($conn, $get);
-    $out=mysqli_fetch_assoc($dat);
-    $valk= $out['capacity'];
-    $newvalu=200000;
-        $addvaluequj="update memcached set capacity= $newvalu";
-        $additk=mysqli_query($conn,$addvaluequj);
-  }
- }
-
- if(isset($_POST['clearmemcached'])){
-  $sql="SELECT uplode.idimg FROM uplode ";
-  $datas=mysqli_query($conn,$sql);
-  $images=mysqli_fetch_all($datas,MYSQLI_ASSOC);
-  mysqli_free_result($datas);
-  $d='';
-  foreach($images as $image ):
-  $d=$image['idimg'];
-  $memcacheD->delete($d);
-  endforeach;
-  //$memcacheD->clear();
- echo "<script>alert(' memcached clear successfully');</script>";
- }
-
- if(isset($_POST['clear'])){
-   $numitem=0;
-   $totalsize=0;
-   $numreq=0;
-   $miss=0;
-   $hit=0;
-   $qlo= "UPDATE memcached SET memcached.items=$numitem ,memcached.totalsize=$totalsize,memcached.numreq=$numreq,memcached.missrate=$miss,memcached.hitrate=$hit ";
-   $dat=mysqli_query($conn,$qlo);
-   echo "<script>alert(' Current Statistices clear successfully');</script>";
- header('Location:current.php');
-
-}
-
-
-
-
-
-
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -113,7 +35,7 @@
                             href="keys.php" role="tab" aria-controls="Display Keys Page">Display Keys Page</a>
                         <a class="list-group-item list-group-item-danger" id="list-settings-list" data-toggle="list"
                             href="current.php" role="tab" aria-controls="Current
-                            Statistices Page">Current Statistices</a>
+                            Statistices Page">  Manager App</a>
                     </div>
 
                 </aside>
@@ -124,48 +46,94 @@
                     <main class="main_content pt-5 ps-5 pe-5">
                         <p id="stat"><b>Display Current Statistices</b></p>
                         <hr />
-            <form action="current.php"  method="POST">
-                <div class="mb-3">
-                  <label for="exampleInputEmail1" class="form-label">Number Items:</label>
-                  <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp " value="<?php echo  $vals; ?>">
-                </div>
-                <div class="mb-3">
-                  <label for="exampleInputPassword1" class="form-label">Total Size:</label>
-                  <input type="text" class="form-control" id="exampleInputPassword1" value="<?php echo $val; ?>">
-                </div>
-                <div class="mb-3">
-                    <label for="exampleInputPassword2" class="form-label">Number Request:</label>
-                    <input type="text" class="form-control" id="exampleInputPassword2"  value="<?php echo $value; ?>">
-                  </div>
-                  <div class="mb-3">
-                    <label for="exampleInputPassword3" class="form-label">Miss Rate:</label>
-                    <input type="text" class="form-control" id="exampleInputPassword3" value="<?php echo  $valu; ?>">
-                  </div>
+                        <div>
+         <canvas id="myChart"></canvas>
+        </div>
 
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
+        <script>
+         const ctx = document.getElementById('myChart');
+
+         new Chart(ctx, {
+           type: 'bar',
+           data: {
+           labels: ['NUM Workers', 'MISS Rate', 'Hit Rate', 'NUM Items', 'Total Size', 'NUM request'],
+           datasets: [{
+           label: '# num',
+           data: [3,5, 2, 1,10, 6],
+           borderWidth: 1
+           }]
+           },
+         options: {
+         scales: {
+          y: {
+          beginAtZero: true
+          }
+         }
+         }
+         });
+        </script>
+        <br>
+        <div class="mb-3">
+                    <label for="exampleInputPassword" class="form-label">capacity memcached:</label>
+                    <input type="number" class="form-control" id="exampleInputPassword" min="1" max="8">
+        </div>
+        
+        <div class="form-floating">
+         <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+         <option selected disabled>Choose a Replacement Policy</option>
+          <option value="Random">Random Replacement</option>
+          <option value="Least">Least Recently Used</option>
+    
+         </select>
+         <label for="floatingSelect">Policy</label>
+         <br>
+         <div class="mb-3">
+                   <label for="exampleInputPassword1" class="form-label">Resizing Memcache Pool</label>
+                   <br>
+                   <label for="exampleInputPassword2" class="form-label">1- Manual Mode</label>
+                   <br>
+                    <button type="button" class="btn btn-danger"> - Shrinking</button>
+                    <button type="button" class="btn btn-danger"> + Growing</button>
+                    <br>
+                    <br>
+                    <label for="exampleInputPassword3" class="form-label">2- Automatic </label>
+        </div>
                   <div class="mb-3">
-                    <label for="exampleInputPassword4" class="form-label">Hit Rate:</label>
-                    <input type="text" class="form-control" id="exampleInputPassword4" value="<?php echo  $valut; ?>">
+                    <label for="exampleInputPassword4" class="form-label">Max Miss Rate:</label>
+                    <input type="text" class="form-control" id="exampleInputPassword4" >
                   </div>
                   <div class="mb-3">
-                    <label for="exampleInputPassword5" class="form-label">capacity memcached:</label>
-                    <input type="text" class="form-control" id="exampleInputPassword5" value="<?php echo  $valk; ?>">
+                    <label for="exampleInputPassword5" class="form-label">Min Miss Rate:</label>
+                    <input type="text" class="form-control" id="exampleInputPassword5" >
                   </div>
-                
                   <div class="mb-3">
-                    <button type="submit" name="clearmemcached" class="btn btn-outline-danger btn-lg"  >clear memcached</button>
+                    <label for="exampleInputPassword6" class="form-label">Ratio to expand:</label>
+                    <input type="text" class="form-control" id="exampleInputPassword6" >
+                  </div>
+                  <div class="mb-3">
+                    <label for="exampleInputPassword7" class="form-label">Ratio to shrink:</label>
+                    <input type="text" class="form-control" id="exampleInputPassword7" >
+                  </div>
+                  <div class="mb-3">
+                  <button type="button" class="btn btn-danger"> Delete Database</button>
+                    </div>
+                    <div class="mb-3">
+                    <button type="button" class="btn btn-danger"> Delete S3</button>
                     </div>
 
                     <div class="mb-3">
-                    <button type="submit" name="clear" class="btn btn-outline-danger btn-lg"  >clear  Statistices</button>
+                    <button type="button" class="btn btn-danger"> clear  memcached</button>
                     </div>
 
+         <br>
 
-
-
-
-              </form> 
-              </main>
-              </main>
+        
+</div>
+         
+            
+                </main>
+                </main>
               </div>
               </div>
             </div>

@@ -32,7 +32,7 @@
                <li><a href="Uplode.php">Uplode image</a></li> 
                <li><a href="Display.php">Display image</a></li> 
                 <li><a href="keys.php">Display Keys</a></li>
-                <li><a href="Current.php">Current statistices</a></li>
+                <li><a href="Current.php"> Manager App</a></li>
                 </ul>
                 </nav>
              <div class="content">

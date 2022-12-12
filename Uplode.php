@@ -1,7 +1,6 @@
 <?php 
 //connected database
 include('connected/connected.php');
-include"connected/mec.php";
 //errors input
 $error=['iderror'=>'',
 'fileerror'=>''];
@@ -15,7 +14,7 @@ $id=$_POST['iddata'];
  $temp=$_FILES['file']["tmp_name"];
  $folder ="images/".$filename;
  //array vaild image
-$extension = substr($filename,strlen($filename)-4,strlen($filename));
+$extension = substr($filename,strlen($filename)-5,strlen($filename));
 $allowed_extensions = array(".jpg",".jpeg",".png",".gif",".PNG");
 //validation input
     if(empty( $filename)){
@@ -32,7 +31,7 @@ $allowed_extensions = array(".jpg",".jpeg",".png",".gif",".PNG");
         $error['iderror']='please enter the id integer';
     }
       //insert image && updata image in same key
-    else{
+  
    if($id!=""&& $filename!=""&&in_array($extension,$allowed_extensions)&&filter_var($id,FILTER_VALIDATE_INT))
      {
         //updata image in same key
@@ -54,25 +53,9 @@ $allowed_extensions = array(".jpg",".jpeg",".png",".gif",".PNG");
          else{
             echo "<script>alert('image not Update ');</script>";
          }
-         //سؤال
-         if($memcacheD->get($id)){
-        $memcacheD->delete($id);
-        echo "<script>alert('droped key in memcached');</script>"; 
-        $memcacheD->set($id,$filename);
-    echo "<script>alert('update in memcached');</script>"; 
-        //numreq 
-        $getvalue="SELECT numreq from  memcached ";
-        $datquery=mysqli_query($conn, $getvalue);
-        $output=mysqli_fetch_assoc($datquery);
-        $value= $output['numreq'];
-        $newvalue=1+$value;
-        $addvaluequery="update memcached set numreq= $newvalue";
-        $addit=mysqli_query($conn,$addvaluequery);
-         }
-        else
-        echo "<script>alert('image not drop memcached');</script>";  
         }
-    
+         //سؤال
+         
         //insert image 
     else{
           $query="insert into uplode(imgname,idimg) values ('$filename',$id)";
@@ -83,64 +66,13 @@ $allowed_extensions = array(".jpg",".jpeg",".png",".gif",".PNG");
        }
         else
         echo "<script>alert('image not inserted');</script>"; 
-            //memcached
-        $get="SELECT capacity from  memcached ";
-        $dat=mysqli_query($conn, $get);
-        $out=mysqli_fetch_assoc($dat);
-        $valk= $out['capacity'];
-        //totalsize
-        $getval="SELECT totalsize from  memcached ";
-    $datque=mysqli_query($conn, $getval);
-    $outp=mysqli_fetch_assoc($datque);
-    $val= $outp['totalsize'];
-    $valnew=$val+$filesize;
-   if($valk<$valnew){
-    echo "<script>alert(' memory cached fulled');</script>";
-  /*  $random_keys=array_rand( $mem,1);
-    $val  = $random_keys[0];
-    $memcacheD->delete($val);
-    $memcacheD->set( $id, $filename);
-    $mem[$id]= $filename;
-    echo "<h5>$mem[$id]</h5>";
- echo "<script>alert('image put memory cached successfully');</script>";*/
-   }
-else{
-    if ($memcacheD->set( $id, $filename)){
-    echo "<script>alert('image put memory cached successfully');</script>";
-    //count request
-    $getvalu="SELECT numreq from memcached ";
-        $datquer=mysqli_query($conn, $getvalu);
-        $outpu=mysqli_fetch_assoc($datquer);
-        $valu= $outpu['numreq'];
-        $newvalu=1+$valu;
-        $addvaluequer="update memcached set numreq= $newvalu";
-        $addi=mysqli_query($conn,$addvaluequer);
-        //countitems
-        $getva="SELECT items from  memcached ";
-            $datqu=mysqli_query($conn, $getva);
-            $outp=mysqli_fetch_assoc($datqu);
-            $val= $outp['items'];
-            $newval=1+$val;
-            $addvaluequ="update memcached set items= $newval";
-            $addi=mysqli_query($conn,$addvaluequ);
-            //size
-        $getvale="SELECT totalsize from  memcached ";
-        $datquer=mysqli_query($conn, $getvale);
-        $outpu=mysqli_fetch_assoc($datquer);
-        $valu= $outpu['totalsize'];
-        $newvalu= $filesize+ $valu;
-        $addvaluequj="update memcached set totalsize= $newvalu";
-        $additk=mysqli_query($conn,$addvaluequj);
-    }
-else 
-echo "<script>alert('image not put memory cached');</script>";
-    }
-}
-}
+          
+        
 }
     
   
     mysqli_close($conn);
+}
 }
 ?>
 <!DOCTYPE 
@@ -177,8 +109,7 @@ html>
                             href="keys.php" role="tab" aria-controls="Display Keys Page">Display Keys</a>
                         <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list"
                             href="current.php" role="tab" aria-controls="Current
-                            Statistices Page">Current
-                            Statistices</a>
+                            Statistices Page">Manager App</a>
                     </div>
     
             </aside>
