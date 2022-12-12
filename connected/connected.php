@@ -1,5 +1,5 @@
 <?php
-$server="database-2.c0r0ncclxwvt.us-east-1.rds.amazonaws.com";
+$server="localhost";
 $user = "admin";
 $pass="asdf##1234";
 $db="image";
